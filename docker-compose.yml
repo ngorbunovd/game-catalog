@@ -1,0 +1,21 @@
+# Деплой одной командой:  docker compose up -d --build
+# (перед этим один раз: cp .env.example .env и заполнить пароли)
+services:
+  antology:
+    build: .
+    image: antology:latest
+    container_name: antology
+    restart: unless-stopped
+    ports:
+      - "${HOST_PORT:-3000}:3000"
+    env_file:
+      - .env
+    environment:
+      PORT: 3000
+    volumes:
+      # Одни и те же каталоги на хосте и в контейнере: игры, заявки и лайки
+      # переживают пересоздание контейнера. Важно, что games/ и _pending/
+      # на одном томе-хосте: одобрение заявки это fs.rename между ними.
+      - ./games:/app/games
+      - ./_pending:/app/_pending
+      - ./data:/app/data

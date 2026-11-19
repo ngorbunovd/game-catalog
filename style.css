@@ -1,0 +1,479 @@
+/* ============================================================
+   АНТОЛОГИЯ ИГР — кибер-пиксель-новогодняя тема
+   Тёмный неон + пиксельные рамки + снег и гирлянда.
+   Без внешних ресурсов — всё работает офлайн и в локальной сети.
+   ============================================================ */
+
+:root {
+  --bg: #070b21;
+  --panel: #0d1330;
+  --panel-2: #111940;
+  --line: #1d2a5e;
+  --text: #d8e6ff;
+  --dim: #7c8ac4;
+  --cyan: #00eaff;
+  --magenta: #ff2ec4;
+  --gold: #ffd23f;
+  --red: #ff3860;
+  --green: #3bff8e;
+}
+
+* { box-sizing: border-box; }
+
+html { color-scheme: dark; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  color: var(--text);
+  background:
+    /* звёздное небо */
+    radial-gradient(1px 1px at 12% 18%, rgba(255,255,255,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 68% 8%, rgba(255,255,255,.55) 50%, transparent 51%),
+    radial-gradient(2px 2px at 84% 26%, rgba(0,234,255,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 34% 32%, rgba(255,255,255,.5) 50%, transparent 51%),
+    radial-gradient(2px 2px at 52% 14%, rgba(255,46,196,.4) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 44%, rgba(255,255,255,.45) 50%, transparent 51%),
+    /* кибер-сетка */
+    linear-gradient(rgba(0,234,255,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,234,255,.045) 1px, transparent 1px),
+    linear-gradient(180deg, #0a1030 0%, var(--bg) 46%, #05081c 100%);
+  background-size: auto, auto, auto, auto, auto, auto, 32px 32px, 32px 32px, auto;
+  background-attachment: fixed;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Сканлайны поверх всего — CRT-эффект */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+  background: repeating-linear-gradient(0deg,
+    rgba(0,0,0,.16) 0 2px, transparent 2px 4px);
+  mix-blend-mode: multiply;
+}
+
+/* Снег (canvas рисует script.js) */
+#snow {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 80;
+  image-rendering: pixelated;
+}
+
+/* ---------- Шапка ---------- */
+
+.hero {
+  position: relative;
+  padding: 64px 24px 56px;
+  text-align: center;
+  overflow: hidden;
+  border-bottom: 4px solid var(--line);
+  box-shadow: 0 4px 0 rgba(0,234,255,.18), 0 12px 40px rgba(0,0,0,.6);
+}
+
+/* Неоновое свечение пола шапки */
+.hero::before {
+  content: "";
+  position: absolute;
+  left: 0; right: 0; bottom: -140px;
+  height: 220px;
+  background:
+    radial-gradient(40% 100% at 30% 0%, rgba(255,46,196,.22), transparent 70%),
+    radial-gradient(40% 100% at 70% 0%, rgba(0,234,255,.22), transparent 70%);
+  pointer-events: none;
+}
+
+/* Гирлянда из пиксельных лампочек */
+.garland {
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+  padding: 10px 8px 6px;
+  border-bottom: 3px solid var(--line);
+}
+.garland i {
+  width: 10px; height: 10px;
+  animation: bulb 1.6s steps(2) infinite;
+}
+.garland i:nth-child(4n+1) { background: var(--red);    box-shadow: 0 0 8px 2px rgba(255,56,96,.8); }
+.garland i:nth-child(4n+2) { background: var(--gold);   box-shadow: 0 0 8px 2px rgba(255,210,63,.8);  animation-delay: .4s; }
+.garland i:nth-child(4n+3) { background: var(--cyan);   box-shadow: 0 0 8px 2px rgba(0,234,255,.8);   animation-delay: .8s; }
+.garland i:nth-child(4n+4) { background: var(--green);  box-shadow: 0 0 8px 2px rgba(59,255,142,.8);  animation-delay: 1.2s; }
+@keyframes bulb { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+
+.hero h1 {
+  position: relative;
+  margin: 0 0 12px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: clamp(1.6rem, 5vw, 3rem);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: #fff;
+  /* хром-аберрация + неон */
+  text-shadow:
+    3px 0 0 rgba(255,46,196,.85),
+    -3px 0 0 rgba(0,234,255,.85),
+    0 0 18px rgba(0,234,255,.35),
+    0 0 42px rgba(255,46,196,.25);
+  animation: flicker 4.5s infinite;
+}
+@keyframes flicker {
+  0%, 100%, 92% { opacity: 1; }
+  93% { opacity: .6; }
+  94% { opacity: 1; }
+  96% { opacity: .7; }
+  97% { opacity: 1; }
+}
+
+.hero .subtitle {
+  position: relative;
+  color: var(--dim);
+  margin: 0 0 28px;
+  font-size: 1.05rem;
+}
+
+/* Снежинки в шапке */
+.flake {
+  position: absolute;
+  color: rgba(216,230,255,.8);
+  text-shadow: 0 0 10px rgba(0,234,255,.7);
+  animation: drift 9s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+.flake.f1 { top: 18%; left: 8%;  font-size: 1.6rem; }
+.flake.f2 { top: 46%; left: 16%; font-size: 1.1rem; animation-delay: -3s; }
+.flake.f3 { top: 24%; right: 9%; font-size: 1.9rem; animation-delay: -5s; }
+.flake.f4 { top: 56%; right: 18%; font-size: 1rem; animation-delay: -1.5s; }
+@keyframes drift {
+  from { transform: translateY(-8px) rotate(-12deg); }
+  to   { transform: translateY(10px) rotate(12deg); }
+}
+
+/* Пиксельная ёлка (box-shadow art, 1 клетка = 10px) */
+.pixel-tree {
+  position: relative;
+  display: block;
+  width: 150px;
+  height: 160px;
+  margin: 0 auto 26px;
+}
+.pixel-tree::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 10px; height: 10px;
+  /* золотая звезда */
+  box-shadow:
+    /* звезда */
+    70px 0 8px 2px var(--gold),
+    /* ярус 1 */
+    70px 10px 0 0 #17b358,
+    60px 20px 0 0 #17b358, 80px 20px 0 0 #17b358,
+    50px 30px 0 0 #17b358, 60px 30px 0 0 #17b358, 70px 30px 0 0 var(--magenta),
+    80px 30px 0 0 #17b358, 90px 30px 0 0 #17b358,
+    40px 40px 0 0 #17b358, 50px 40px 0 0 #17b358, 60px 40px 0 0 #17b358,
+    70px 40px 0 0 #17b358, 80px 40px 0 0 #17b358, 90px 40px 0 0 #17b358,
+    100px 40px 0 0 #17b358,
+    /* ярус 2 */
+    30px 50px 0 0 #17b358, 40px 50px 0 0 #17b358, 50px 50px 0 0 #17b358,
+    60px 50px 0 0 #17b358, 70px 50px 0 0 #17b358, 80px 50px 0 0 #17b358,
+    90px 50px 0 0 #17b358, 100px 50px 0 0 #17b358, 110px 50px 0 0 #17b358,
+    50px 60px 0 0 #17b358, 60px 60px 0 0 #17b358, 70px 60px 0 0 #17b358,
+    80px 60px 0 0 #17b358, 90px 60px 0 0 #17b358,
+    40px 60px 0 0 var(--cyan), 100px 60px 0 0 var(--gold),
+    30px 70px 0 0 #17b358, 40px 70px 0 0 #17b358, 50px 70px 0 0 #17b358,
+    60px 70px 0 0 #17b358, 70px 70px 0 0 #17b358, 80px 70px 0 0 #17b358,
+    90px 70px 0 0 #17b358, 100px 70px 0 0 #17b358, 110px 70px 0 0 #17b358,
+    120px 70px 0 0 #17b358,
+    20px 80px 0 0 #17b358, 30px 80px 0 0 #17b358, 40px 80px 0 0 #17b358,
+    50px 80px 0 0 #17b358, 60px 80px 0 0 #17b358, 70px 80px 0 0 #17b358,
+    80px 80px 0 0 #17b358, 90px 80px 0 0 #17b358, 100px 80px 0 0 #17b358,
+    110px 80px 0 0 #17b358, 120px 80px 0 0 #17b358, 130px 80px 0 0 #17b358,
+    /* ярус 3 */
+    40px 90px 0 0 #17b358, 50px 90px 0 0 #17b358, 60px 90px 0 0 #17b358,
+    70px 90px 0 0 #17b358, 80px 90px 0 0 #17b358, 90px 90px 0 0 #17b358,
+    100px 90px 0 0 #17b358,
+    30px 100px 0 0 #17b358, 40px 100px 0 0 #17b358, 50px 100px 0 0 #17b358,
+    60px 100px 0 0 #17b358, 70px 100px 0 0 var(--red), 80px 100px 0 0 #17b358,
+    90px 100px 0 0 #17b358, 100px 100px 0 0 #17b358, 110px 100px 0 0 #17b358,
+    20px 110px 0 0 #17b358, 30px 110px 0 0 #17b358, 40px 110px 0 0 #17b358,
+    50px 110px 0 0 #17b358, 60px 110px 0 0 #17b358, 70px 110px 0 0 #17b358,
+    80px 110px 0 0 #17b358, 90px 110px 0 0 #17b358, 100px 110px 0 0 #17b358,
+    110px 110px 0 0 #17b358, 120px 110px 0 0 #17b358, 130px 110px 0 0 #17b358,
+    10px 120px 0 0 #17b358, 20px 120px 0 0 #17b358, 30px 120px 0 0 var(--magenta),
+    40px 120px 0 0 #17b358, 50px 120px 0 0 #17b358, 60px 120px 0 0 #17b358,
+    70px 120px 0 0 #17b358, 80px 120px 0 0 #17b358, 90px 120px 0 0 #17b358,
+    100px 120px 0 0 #17b358, 110px 120px 0 0 #17b358, 120px 120px 0 0 var(--cyan),
+    130px 120px 0 0 #17b358, 140px 120px 0 0 #17b358,
+    /* ствол */
+    60px 130px 0 0 #7c4a21, 70px 130px 0 0 #7c4a21, 80px 130px 0 0 #7c4a21,
+    60px 140px 0 0 #7c4a21, 70px 140px 0 0 #7c4a21, 80px 140px 0 0 #7c4a21;
+  animation: tree-glow 3s ease-in-out infinite alternate;
+}
+@keyframes tree-glow {
+  from { filter: drop-shadow(0 0 6px rgba(59,255,142,.25)); }
+  to   { filter: drop-shadow(0 0 16px rgba(59,255,142,.5)); }
+}
+
+@media (max-width: 720px) {
+  .pixel-tree { display: none; }
+}
+
+/* ---------- Основная часть ---------- */
+
+main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 24px 64px;
+}
+
+.toolbar {
+  display: flex; gap: 12px; margin-bottom: 28px; flex-wrap: wrap;
+}
+.toolbar input, .toolbar select {
+  padding: 12px 16px;
+  border: 3px solid var(--line);
+  background: var(--panel);
+  color: var(--text);
+  font-size: 1rem;
+  font-family: inherit;
+  outline: none;
+}
+.toolbar input { flex: 1; min-width: 240px; }
+.toolbar input::placeholder { color: var(--dim); }
+.toolbar input:focus, .toolbar select:focus {
+  border-color: var(--cyan);
+  box-shadow: 0 0 0 2px rgba(0,234,255,.25), 0 0 18px rgba(0,234,255,.25);
+}
+
+.games {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+  gap: 24px;
+}
+
+/* Пиксельная рамка: 4 стороны без скруглений */
+.game-card {
+  background: var(--panel);
+  border: none;
+  box-shadow:
+    0 -4px 0 0 var(--line), 0 4px 0 0 var(--line),
+    -4px 0 0 0 var(--line), 4px 0 0 0 var(--line);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  transition: transform .15s, box-shadow .15s;
+}
+.game-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    0 -4px 0 0 var(--cyan), 0 4px 0 0 var(--cyan),
+    -4px 0 0 0 var(--cyan), 4px 0 0 0 var(--cyan),
+    0 0 26px rgba(0,234,255,.35);
+}
+.game-card .cover {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  background: var(--panel-2);
+  border-bottom: 4px solid var(--line);
+  display: block;
+  image-rendering: pixelated;
+}
+.game-card .body { padding: 16px; flex: 1; display: flex; flex-direction: column; }
+.game-card h3 {
+  margin: 0 0 8px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: 1.1rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 0 0 12px rgba(0,234,255,.45);
+}
+.game-card .summary {
+  color: var(--dim);
+  font-size: .92rem;
+  flex: 1;
+  margin: 0 0 12px;
+}
+.game-card .author {
+  font-size: .85rem;
+  color: var(--gold);
+  margin-bottom: 12px;
+}
+.game-card .footer {
+  display: flex; justify-content: space-between; align-items: center;
+  border-top: 3px solid var(--line);
+  padding: 12px 16px;
+  background: var(--panel-2);
+}
+
+.like {
+  display: inline-flex; align-items: center; gap: 6px;
+  border: 3px solid var(--line);
+  background: transparent;
+  color: var(--text);
+  padding: 5px 12px;
+  cursor: pointer;
+  font-size: .92rem;
+  font-family: inherit;
+  transition: all .15s;
+}
+.like:hover { border-color: var(--red); box-shadow: 0 0 12px rgba(255,56,96,.4); }
+.like.liked {
+  background: rgba(255,56,96,.15);
+  border-color: var(--red);
+  color: var(--red);
+  box-shadow: 0 0 14px rgba(255,56,96,.45);
+}
+.like .heart { font-size: 1rem; }
+
+.play {
+  color: var(--cyan);
+  text-decoration: none;
+  font-weight: 700;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  text-transform: uppercase;
+  font-size: .9rem;
+  letter-spacing: .05em;
+  text-shadow: 0 0 10px rgba(0,234,255,.5);
+}
+.play:hover { text-shadow: 0 0 16px rgba(0,234,255,1); }
+
+.empty {
+  text-align: center;
+  padding: 64px 24px;
+  color: var(--dim);
+  font-size: 1.1rem;
+}
+
+/* ---------- Кнопки ---------- */
+
+.btn {
+  padding: 12px 22px;
+  border: 3px solid var(--line);
+  font-size: .95rem;
+  cursor: pointer;
+  background: var(--panel-2);
+  color: var(--text);
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  transition: all .15s;
+}
+.btn:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 16px rgba(0,234,255,.35);
+}
+.btn-primary {
+  background: linear-gradient(180deg, var(--magenta), #b0148f);
+  color: #fff;
+  border-color: var(--magenta);
+  box-shadow: 0 0 18px rgba(255,46,196,.4);
+  text-shadow: 0 0 8px rgba(255,255,255,.5);
+}
+.btn-primary:hover {
+  border-color: #fff;
+  box-shadow: 0 0 26px rgba(255,46,196,.7);
+}
+.btn:disabled { opacity: .5; cursor: not-allowed; }
+
+/* ---------- Модалка ---------- */
+
+.modal {
+  border: none;
+  outline: 3px solid var(--cyan);
+  box-shadow:
+    0 -6px 0 0 var(--cyan), 0 6px 0 0 var(--cyan),
+    -6px 0 0 0 var(--cyan), 6px 0 0 0 var(--cyan),
+    0 0 40px rgba(0,234,255,.4);
+  padding: 0;
+  max-width: 480px;
+  width: calc(100% - 32px);
+  background: var(--panel);
+  color: var(--text);
+}
+.modal::backdrop {
+  background: rgba(4, 6, 20, .78);
+  backdrop-filter: blur(2px);
+}
+.modal form { padding: 24px; display: flex; flex-direction: column; gap: 12px; }
+.modal h2 {
+  margin: 0 0 4px;
+  font-family: ui-monospace, "SF Mono", "Cascadia Mono", Consolas, "Courier New", monospace;
+  font-size: 1.15rem;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  color: #fff;
+  text-shadow: 2px 0 0 rgba(255,46,196,.7), -2px 0 0 rgba(0,234,255,.7);
+}
+.modal label {
+  display: flex; flex-direction: column; gap: 6px;
+  font-weight: 600; font-size: .94rem;
+}
+.modal label input {
+  padding: 10px 12px;
+  border: 3px solid var(--line);
+  background: var(--bg);
+  color: var(--text);
+  font-size: 1rem; font-family: inherit;
+  outline: none;
+}
+.modal label input:focus { border-color: var(--magenta); }
+.modal label input::placeholder { color: var(--dim); }
+.modal .hint { color: var(--dim); font-size: .85rem; margin: -4px 0 0; }
+.modal .hint code { color: var(--gold); }
+.modal .actions {
+  display: flex; justify-content: flex-end; gap: 8px;
+  margin-top: 8px;
+}
+.errors {
+  background: rgba(255,56,96,.12);
+  border: 3px solid var(--red);
+  padding: 12px 16px;
+  color: #ffb3c2;
+  font-size: .9rem;
+}
+.errors ul { margin: 4px 0 0; padding-left: 20px; }
+.success {
+  background: rgba(59,255,142,.1);
+  border: 3px solid var(--green);
+  padding: 12px 16px;
+  color: #b8ffd6;
+}
+
+/* ---------- Подвал ---------- */
+
+.site-footer {
+  border-top: 4px solid var(--line);
+  box-shadow: 0 -4px 0 rgba(255,46,196,.15);
+  padding: 20px 24px 26px;
+  text-align: center;
+  color: var(--dim);
+  font-size: .9rem;
+}
+.site-footer .garland {
+  position: static;
+  margin: 0 auto 14px;
+  max-width: 420px;
+  border-bottom: none;
+  padding: 0 0 6px;
+}
+.site-footer a {
+  color: var(--cyan);
+  text-decoration: none;
+}
+.site-footer a:hover { text-shadow: 0 0 10px rgba(0,234,255,.8); }
+
+/* Уважаем настройку «меньше движения» */
+@media (prefers-reduced-motion: reduce) {
+  .garland i, .hero h1, .flake, .pixel-tree::before { animation: none; }
+  .game-card, .btn, .like { transition: none; }
+}

@@ -1,0 +1,12 @@
+# В образ не попадают: секреты и всё, что не нужно для работы сервера
+node_modules
+.git
+.gitignore
+.env
+*.log
+.DS_Store
+Dockerfile
+docker-compose.yml
+.dockerignore
+deploy
+docs

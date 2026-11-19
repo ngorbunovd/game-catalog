@@ -1,0 +1,659 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Антология игр — проектная документация</title>
+<style>
+  :root {
+    --bg: #ffffff; --fg: #1f2937; --muted: #6b7280; --border: #e5e7eb;
+    --accent: #2563eb; --accent-soft: #eff6ff; --code-bg: #f8fafc;
+    --warn-bg: #fff7ed; --warn-border: #fdba74;
+    --ok-bg: #f0fdf4; --ok-border: #86efac;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; line-height: 1.65; color: var(--fg); background: var(--bg); }
+  .container { max-width: 960px; margin: 0 auto; padding: 40px 24px 80px; }
+  header.hero { border-bottom: 1px solid var(--border); padding-bottom: 32px; margin-bottom: 40px; }
+  header.hero h1 { font-size: 2.2rem; margin: 0 0 12px; letter-spacing: -0.02em; }
+  header.hero .subtitle { color: var(--muted); font-size: 1.05rem; margin: 0; }
+  header.hero .meta { display: flex; gap: 20px; flex-wrap: wrap; margin-top: 16px; font-size: 0.9rem; color: var(--muted); }
+  nav.toc { background: var(--accent-soft); border: 1px solid var(--border); border-radius: 8px; padding: 20px 24px; margin-bottom: 40px; }
+  nav.toc h2 { font-size: 1rem; margin: 0 0 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--muted); }
+  nav.toc ol { margin: 0; padding-left: 20px; }
+  nav.toc li { margin: 4px 0; }
+  nav.toc a { color: var(--accent); text-decoration: none; }
+  nav.toc a:hover { text-decoration: underline; }
+  section { margin-bottom: 56px; }
+  h2 { font-size: 1.6rem; border-bottom: 2px solid var(--border); padding-bottom: 8px; margin: 0 0 20px; letter-spacing: -0.01em; }
+  h3 { font-size: 1.2rem; margin-top: 32px; margin-bottom: 12px; }
+  h4 { font-size: 1rem; margin-top: 24px; margin-bottom: 8px; }
+  p { margin: 10px 0; }
+  code { font-family: "SF Mono", Menlo, Monaco, Consolas, "Liberation Mono", monospace; font-size: 0.9em; background: var(--code-bg); padding: 2px 6px; border-radius: 4px; border: 1px solid var(--border); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; overflow-x: auto; font-size: 0.88rem; line-height: 1.5; margin: 16px 0; }
+  pre code { background: none; border: none; padding: 0; font-size: inherit; }
+  table { width: 100%; border-collapse: collapse; margin: 16px 0; font-size: 0.92rem; }
+  th, td { border: 1px solid var(--border); padding: 10px 14px; text-align: left; vertical-align: top; }
+  th { background: var(--code-bg); font-weight: 600; }
+  ul, ol { padding-left: 24px; }
+  li { margin: 6px 0; }
+  .callout { border-left: 4px solid var(--accent); background: var(--accent-soft); padding: 14px 20px; border-radius: 6px; margin: 20px 0; }
+  .callout.warn { border-left-color: var(--warn-border); background: var(--warn-bg); }
+  .callout.ok { border-left-color: var(--ok-border); background: var(--ok-bg); }
+  .callout-title { font-weight: 600; margin: 0 0 6px; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.06em; }
+  .prompt-block { background: #0f172a; color: #e2e8f0; border-radius: 8px; padding: 20px 24px; margin: 16px 0; font-size: 0.88rem; white-space: pre-wrap; font-family: "SF Mono", Menlo, Monaco, Consolas, monospace; line-height: 1.6; border: 1px solid #1e293b; }
+  .prompt-block .label { display: block; color: #94a3b8; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 12px; }
+  .architecture { background: var(--code-bg); border: 1px solid var(--border); border-radius: 8px; padding: 16px 20px; font-family: "SF Mono", Menlo, Monaco, Consolas, monospace; font-size: 0.82rem; white-space: pre; overflow-x: auto; line-height: 1.5; }
+  footer { border-top: 1px solid var(--border); padding-top: 24px; margin-top: 40px; color: var(--muted); font-size: 0.88rem; }
+  @media print { body { font-size: 11pt; } nav.toc { display: none; } section { page-break-inside: avoid; } }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header class="hero">
+  <h1>Антология игр</h1>
+  <p class="subtitle">Проектная документация для реализации веб-приложения в учебном заведении</p>
+  <div class="meta">
+    <span><strong>Версия:</strong> 2.0</span>
+    <span><strong>Формат:</strong> техническое задание + план реализации</span>
+    <span><strong>Назначение:</strong> передача в разработку (человек или нейросеть)</span>
+  </div>
+</header>
+
+<nav class="toc">
+  <h2>Содержание</h2>
+  <ol>
+    <li><a href="#description">Описание проекта</a></li>
+    <li><a href="#result">Итоговый результат</a></li>
+    <li><a href="#context">Дополнительные вводные</a></li>
+    <li><a href="#plan">План реализации</a></li>
+    <li><a href="#ai-instructions">Инструкция для нейросети</a></li>
+    <li><a href="#ai-command">Команда для нейросети</a></li>
+  </ol>
+</nav>
+
+<!-- ============================================================ -->
+<section id="description">
+  <h2>1. Описание проекта</h2>
+  <p>
+    <strong>«Антология игр»</strong> — образовательный веб-проект для учебного заведения.
+    Ученики разрабатывают самостоятельные HTML/CSS/JS-игры, подают их через кнопку на главной
+    странице, преподаватель проверяет и подтверждает публикацию, а посетители каталога могут
+    играть и ставить лайки понравившимся играм.
+  </p>
+  <p>
+    Ключевая идея — <strong>максимальная простота</strong>: никакой CI/CD, никакого Git-workflow
+    для ученика, никакой сборки. Игра — это папка <code>game-catalog/games/&lt;slug&gt;/</code>
+    с четырьмя файлами, которую можно открыть двойным кликом по <code>index.html</code>
+    и сразу играть. Каталог — это статическая страница, которая запрашивает список игр у
+    минимального бэкенда и рендерит карточки с кнопками «Играть» и «Лайк».
+  </p>
+
+  <h3>Учебные цели</h3>
+  <ul>
+    <li>Практика HTML/CSS/JS на реальном проекте с обратной связью от сверстников.</li>
+    <li>Понимание структуры веб-проекта: клиент, сервер, API, статические файлы.</li>
+    <li>Навык оформления результата: обложка, описание, метаданные.</li>
+    <li>Знакомство с жизненным циклом публикации: разработка → подача → ревью → публикация.</li>
+  </ul>
+
+  <h3>Организационная модель</h3>
+  <ul>
+    <li><strong>Ученик</strong> — автор игры; разрабатывает локально, отправляет ZIP через кнопку «Подать игру».</li>
+    <li><strong>Преподаватель</strong> — модератор; проверяет заявку в админке, approve'ит или отклоняет.</li>
+    <li><strong>Посетитель</strong> — ученики и сотрудники; играют и ставят лайки (по одному на игру).</li>
+    <li><strong>Система</strong> — минимальный бэкенд для приёма заявок, хранения лайков и выдачи каталога.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="result">
+  <h2>2. Итоговый результат</h2>
+  <p>По завершении проекта должны быть получены:</p>
+  <ul>
+    <li>
+      <strong>Главная страница «Антология игр»</strong> по адресу <code>https://antology.local/</code>
+      (файл <code>game-catalog/index.html</code>): список загруженных игр с русскими названиями
+      из метаданных, обложками, описаниями, счётчиком лайков и кнопкой «Подать игру».
+    </li>
+    <li>
+      <strong>Папка <code>game-catalog/games/</code></strong> с папками игр. Каждая игра —
+      это <code>games/&lt;slug&gt;/index.html</code>, <code>style.css</code>, <code>script.js</code>,
+      <code>game.json</code> и <code>cover.png</code>. Открывается и тестируется напрямую,
+      без участия каталога.
+    </li>
+    <li>
+      <strong>Механизм голосования:</strong> одна сессия пользователя = один лайк на игру.
+      Лайк ставится и снимается. Счётчик отображается рядом с каждой игрой на главной странице.
+    </li>
+    <li>
+      <strong>Механизм подачи и одобрения:</strong>
+      <ul>
+        <li>Кнопка «Подать игру» на главной странице открывает форму: название, автор, описание, ZIP с папкой игры.</li>
+        <li>Заявка сохраняется на сервере в <code>_pending/</code> и попадает в админку преподавателя.</li>
+        <li>Преподаватель одобряет заявку → папка переезжает в <code>games/&lt;slug&gt;/</code> и игра появляется на главной.</li>
+      </ul>
+    </li>
+    <li>
+      <strong>Минимальный бэкенд (Node.js + Express)</strong> — API для списка игр, лайков,
+      приёма заявок и админки преподавателя. Без БД, всё состояние — в JSON-файле и папках на диске.
+    </li>
+    <li>
+      <strong>Документация:</strong>
+      <ul>
+        <li><code>README.md</code> — обзор, быстрый старт, структура, документация по ссылкам;</li>
+        <li><code>gamegenerateprompt.md</code> — промпт-инструкция для генерации папки с игрой;</li>
+        <li><code>docs/CONTRIBUTING.md</code> — как сделать и подать игру;</li>
+        <li><code>docs/TEACHER_GUIDE.md</code> — как модерировать заявки;</li>
+        <li><code>docs/SECURITY.md</code> — ограничения и защита.</li>
+      </ul>
+    </li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="context">
+  <h2>3. Дополнительные вводные</h2>
+  <p>Уточнения, полученные от заказчика, задают рамки проекта.</p>
+  <table>
+    <thead><tr><th style="width:40%">Параметр</th><th>Значение</th></tr></thead>
+    <tbody>
+      <tr><td>Корневой каталог проекта</td><td><code>game-catalog/</code>. Внутри — <code>index.html</code> (главная страница) и папка <code>games/</code> с играми.</td></tr>
+      <tr><td>Тип игр</td><td>Самостоятельные HTML/CSS/JS-игры, у каждой своя папка в <code>games/</code>.</td></tr>
+      <tr><td>Запуск игры</td><td>Клик по карточке в каталоге открывает <code>games/&lt;slug&gt;/index.html</code> — игру можно запустить и напрямую, без каталога.</td></tr>
+      <tr><td>CI/CD</td><td>Не используется. Игры полностью самостоятельны, сборка и деплой не требуются.</td></tr>
+      <tr><td>Голосование</td><td>Один лайк на игру от пользователя; можно ставить и снимать; счётчик отображается рядом с каждой игрой.</td></tr>
+      <tr><td>Подача игры</td><td>Кнопка на главной странице → форма → ZIP с папкой → заявка попадает преподавателю.</td></tr>
+      <tr><td>Одобрение</td><td>Вручную преподавателем через админку; после одобрения игра появляется в каталоге.</td></tr>
+      <tr><td>Хостинг</td><td>Собственный локальный сервер учебного заведения (Ubuntu LTS + Nginx + Node.js).</td></tr>
+      <tr><td>Язык интерфейса</td><td>Русский; названия игр на главной — из <code>game.json</code>.</td></tr>
+      <tr><td>Масштаб</td><td>Не более 40 игр; не более 30 одновременных пользователей.</td></tr>
+      <tr><td>Изоляция игр</td><td>Каждая игра — в отдельной папке; общих файлов между играми нет.</td></tr>
+    </tbody>
+  </table>
+
+  <div class="callout warn">
+    <p class="callout-title">Следствия из требований</p>
+    <ul style="margin:6px 0;">
+      <li>Из-за лайков и подачи заявок нужен <strong>серверный бэкенд</strong> — без него эти функции не реализуемы честно.</li>
+      <li>Бэкенд минимальный: Express + JSON-файлы на диске, без БД и без аутентификации пользователей.</li>
+      <li>Один origin (без разделения на <code>games.*</code> и <code>antology.*</code>) — игры должны открываться напрямую.</li>
+      <li>Модерация защищена паролем преподавателя (HTTP Basic Auth через Nginx).</li>
+    </ul>
+  </div>
+</section>
+
+<!-- ============================================================ -->
+<section id="plan">
+  <h2>4. План реализации</h2>
+
+  <h3>4.1. Архитектура (резюме)</h3>
+  <div class="architecture">[Ученик] --разработка в games/&lt;slug&gt;/--> [локальная проверка: открыть index.html]
+                                                        │
+                                                        ▼
+[Ученик] --ZIP через "Подать игру"--> POST /api/upload --> _pending/&lt;id&gt;/
+                                                        │
+                                                        ▼
+[Преподаватель] --/admin--> approve/reject --> games/&lt;slug&gt;/   (публикация)
+                                                        │
+                                                        ▼
+[Гость] --GET /--> каталог (index.html) --GET /api/games--> список игр + счётчики
+[Гость] --клик по карточке--> games/&lt;slug&gt;/index.html      (запуск игры)
+[Гость] --кнопка "Лайк"--> POST /api/games/&lt;slug&gt;/like   (переключение лайка)</div>
+  <p>Ключевые принципы:</p>
+  <ul>
+    <li><strong>Один origin, один сервер.</strong> Nginx отдаёт статику (<code>index.html</code>, <code>games/</code>, <code>admin/</code>) и проксирует <code>/api/*</code> в Node.js.</li>
+    <li><strong>Игры самостоятельны.</strong> Открытие <code>games/&lt;slug&gt;/index.html</code> работает без бэкенда и каталога — это и есть тестирование автором.</li>
+    <li><strong>Без БД.</strong> 40 игр и 30 пользователей — это единицы килобайт JSON. Хватит одного файла <code>data/votes.json</code> и папки <code>_pending/</code>.</li>
+    <li><strong>Без CI/CD.</strong> Нет пайплайна, нет сборки, нет preview-окружений. Код сервера ставится один раз, контент (игры) добавляется через админку.</li>
+  </ul>
+
+  <h3>4.2. Технологический стек</h3>
+  <table>
+    <thead><tr><th style="width:22%">Слой</th><th style="width:38%">Выбор</th><th>Почему</th></tr></thead>
+    <tbody>
+      <tr><td>ОС сервера</td><td>Ubuntu 22.04 LTS / 24.04 LTS</td><td>Стандарт, долгая поддержка.</td></tr>
+      <tr><td>Веб-сервер</td><td><strong>Nginx</strong></td><td>Статика + reverse-proxy к Node.js + Basic Auth на <code>/admin</code>.</td></tr>
+      <tr><td>Бэкенд</td><td><strong>Node.js LTS + Express</strong></td><td>Минимально, знакомо, много примеров. <code>multer</code> для приёма ZIP, <code>adm-zip</code> для распаковки, <code>cookie-parser</code> для сессий.</td></tr>
+      <tr><td>Хранилище</td><td><strong>JSON на диске</strong></td><td>Проще, чем БД; подходит для 40 игр и 30 пользователей.</td></tr>
+      <tr><td>Фронтенд</td><td><strong>vanilla JS</strong> + один CSS</td><td>Никаких фреймворков — ученику проще читать и модифицировать.</td></tr>
+      <tr><td>Аутентификация</td><td><strong>HTTP Basic Auth</strong> для <code>/admin</code></td><td>Одна строка в Nginx. Пользователи каталога не аутентифицируются.</td></tr>
+      <tr><td>HTTPS</td><td>certbot / внутренний CA</td><td>Стандарт для cookie с сессией.</td></tr>
+    </tbody>
+  </table>
+
+  <h3>4.3. Структура каталога проекта</h3>
+  <pre><code>game-catalog/
+├── index.html                 # главная страница «Антология игр»
+├── style.css                  # стили каталога
+├── script.js                  # рендер списка, лайки, модалка подачи
+├── games/                     # опубликованные игры
+│   ├── snake/
+│   │   ├── index.html         # точка входа игры
+│   │   ├── style.css
+│   │   ├── script.js
+│   │   ├── game.json
+│   │   └── cover.png
+│   └── …
+├── _pending/                  # заявки, ожидающие одобрения
+│   └── &lt;upload-id&gt;/           # распакованная папка игры + meta.json
+├── admin/
+│   └── index.html             # панель модерации (Basic Auth)
+├── api/
+│   ├── server.js              # Express-приложение
+│   ├── routes/
+│   │   ├── games.js           # GET /api/games, GET/POST /api/games/:slug/like
+│   │   ├── upload.js          # POST /api/upload
+│   │   └── pending.js         # GET/POST /api/pending/*
+│   └── lib/
+│       ├── storage.js         # чтение/запись JSON и папок
+│       ├── validate.js        # проверка структуры игры
+│       └── session.js         # выдача и проверка cookie
+├── data/
+│   └── votes.json             # { "&lt;slug&gt;": ["&lt;session-id&gt;", …] }
+├── docs/
+│   ├── CONTRIBUTING.md
+│   ├── TEACHER_GUIDE.md
+│   └── SECURITY.md
+├── README.md
+├── gamegenerateprompt.md
+└── package.json</code></pre>
+  <p><strong>Правило изоляции:</strong> у каждой игры — своя папка <code>games/&lt;slug&gt;/</code>. Игры не ссылаются друг на друга и на общие файлы.</p>
+
+  <h3>4.4. Формат игры и схема метаданных</h3>
+  <p>Каждая игра — это папка <code>games/&lt;slug&gt;/</code> с обязательными файлами:</p>
+  <ul>
+    <li><code>index.html</code> — точка входа, при открытии игра запускается;</li>
+    <li><code>style.css</code> — стили (может быть пустым);</li>
+    <li><code>script.js</code> — логика (может быть пустым);</li>
+    <li><code>game.json</code> — метаданные;</li>
+    <li><code>cover.png</code> — обложка 512×512 или 512×256.</li>
+  </ul>
+  <p>Дополнительно можно положить папку <code>assets/</code> для картинок, звуков и шрифтов.</p>
+
+  <h4>game.json — схема</h4>
+  <pre><code>{
+  "$schema": "https://antology.local/schemas/game.schema.json",
+  "slug": "snake",
+  "title": "Змейка",
+  "summary": "Классическая аркада: собирай яблоки и не врезайся в себя",
+  "description": "Полное описание игры в markdown. Что за игра, откуда идея, чем интересна.",
+  "author": {
+    "name": "Иванов Иван",
+    "class": "7А"
+  },
+  "genre": "arcade",
+  "tags": ["змейка", "аркада", "классика"],
+  "controls": "Стрелки или WASD",
+  "ageRating": "0+",
+  "coverImage": "cover.png",
+  "language": "ru",
+  "createdAt": "2025-11-16",
+  "license": "CC-BY-4.0"
+}</code></pre>
+  <p><strong>Обязательные поля:</strong> <code>slug</code>, <code>title</code>, <code>summary</code>, <code>description</code>, <code>author.name</code>, <code>author.class</code>, <code>coverImage</code>, <code>createdAt</code>.</p>
+  <p><strong>Опциональные:</strong> <code>genre</code>, <code>tags</code>, <code>controls</code>, <code>ageRating</code>, <code>language</code>, <code>license</code>.</p>
+  <p><code>genre</code> — из списка: <code>arcade</code>, <code>puzzle</code>, <code>strategy</code>, <code>action</code>, <code>adventure</code>, <code>quiz</code>, <code>other</code>.<br>
+     <code>ageRating</code> — из списка: <code>0+</code>, <code>6+</code>, <code>12+</code>, <code>16+</code>, <code>18+</code>.</p>
+  <p><code>slug</code> должен совпадать с именем папки, соответствовать <code>^[a-z0-9][a-z0-9-]{1,40}$</code> и быть уникальным.</p>
+
+  <h3>4.5. Главная страница каталога</h3>
+  <p>Файл <code>game-catalog/index.html</code> — точка входа всего проекта. Содержит:</p>
+  <ul>
+    <li><strong>Заголовок</strong> «Антология игр» и краткое описание проекта.</li>
+    <li><strong>Кнопку «Подать игру»</strong> — открывает модальное окно подачи.</li>
+    <li><strong>Сетку карточек игр</strong> — рендерится JS из ответа <code>GET /api/games</code>.</li>
+    <li><strong>Поле поиска и фильтр по жанру</strong> — фильтрация на клиенте.</li>
+  </ul>
+
+  <h4>Карточка игры</h4>
+  <pre><code>&lt;article class="game-card"&gt;
+  &lt;img class="cover" src="games/snake/cover.png" alt="Обложка"&gt;
+  &lt;h3 class="title"&gt;Змейка&lt;/h3&gt;
+  &lt;p class="summary"&gt;Классическая аркада...&lt;/p&gt;
+  &lt;div class="footer"&gt;
+    &lt;button class="like"&gt;❤ &lt;span class="likes"&gt;0&lt;/span&gt;&lt;/button&gt;
+    &lt;a class="play" href="games/snake/index.html"&gt;Играть&lt;/a&gt;
+  &lt;/div&gt;
+&lt;/article&gt;</code></pre>
+  <p>Клик по карточке (или по кнопке «Играть») — переход на <code>games/&lt;slug&gt;/index.html</code>. Игра открывается на весь экран в новой вкладке или в iframe на странице-обёртке — оба варианта допустимы, предпочтителен iframe для сохранения контекста каталога.</p>
+
+  <h3>4.6. Механизм голосования</h3>
+  <p><strong>Требование:</strong> один лайк на игру от пользователя; можно ставить и снимать; счётчик рядом с игрой.</p>
+
+  <h4>Идентификация пользователя</h4>
+  <ul>
+    <li>При первом запросе к API сервер выдаёт <code>session_id</code> — случайный UUID, подписанный HMAC, в cookie <code>antology_session</code> (<code>HttpOnly</code>, <code>SameSite=Lax</code>, <code>Secure</code>).</li>
+    <li>Пользователь не регистрируется, аутентификации нет — сессия просто анонимный идентификатор.</li>
+    <li>Альтернативные меры (по IP) не применяются — это создаёт проблемы у учеников за общим школьным NAT.</li>
+  </ul>
+
+  <h4>Хранение</h4>
+  <p>Файл <code>data/votes.json</code>:</p>
+  <pre><code>{
+  "snake": ["a1b2c3d4-...", "e5f6...", "..."],
+  "tetris": ["a1b2c3d4-..."]
+}</code></pre>
+  <p>Размер файла — сотни байт на игру. При каждом лайке файл перезаписывается атомарно (запись во временный + <code>rename</code>).</p>
+
+  <h4>API</h4>
+  <table>
+    <thead><tr><th>Метод</th><th>Endpoint</th><th>Описание</th></tr></thead>
+    <tbody>
+      <tr><td>GET</td><td><code>/api/games</code></td><td>Список игр: <code>[{ slug, title, summary, author, coverImage, likes, liked }]</code>. <code>liked</code> рассчитан для текущей сессии.</td></tr>
+      <tr><td>POST</td><td><code>/api/games/:slug/like</code></td><td>Тоггл лайка: если сессия уже в списке — удалить, иначе добавить. Возвращает <code>{ likes, liked }</code>.</td></tr>
+    </tbody>
+  </table>
+
+  <h4>Ограничения и защита</h4>
+  <ul>
+    <li>Счётчик — это <em>длина</em> массива сессий; отдельного поля «количество» нет, чтобы данные не рассинхронизировались.</li>
+    <li>Очистка cookie даёт возможность проголосовать повторно — считаем это допустимым для учебного проекта (не деньги и не рейтинг с призами).</li>
+    <li>Rate limit: не более 20 запросов лайков в минуту с одной сессии (in-memory счётчик).</li>
+    <li>При переключении лайка фронт оптимистично обновляет счётчик и откатывает, если сервер вернул ошибку.</li>
+  </ul>
+
+  <h3>4.7. Подача игры и модерация</h3>
+
+  <h4>Фронтенд: форма «Подать игру»</h4>
+  <p>Модалка на <code>index.html</code> содержит:</p>
+  <ul>
+    <li>Название игры (обязательное, используется как основа <code>slug</code>);</li>
+    <li>Имя и класс автора;</li>
+    <li>Краткое и полное описание;</li>
+    <li>Жанр и возрастной рейтинг (селекты);</li>
+    <li>Поле выбора файла — <code>&lt;input type="file" accept=".zip"&gt;</code>;</li>
+    <li>Кнопка «Отправить на проверку».</li>
+  </ul>
+  <p>Отправка: <code>FormData</code> через <code>fetch POST /api/upload</code>.</p>
+
+  <div class="callout">
+    <p class="callout-title">Почему ZIP, а не папка</p>
+    <p>Загрузка папки через <code>&lt;input webkitdirectory&gt;</code> поддерживается не везде и плохо работает на старых браузерах школьных компьютеров. ZIP — универсально, ученику достаточно нажать «Отправить в архив» в файловом менеджере. Инструкция — в <code>gamegenerateprompt.md</code>.</p>
+  </div>
+
+  <h4>Бэкенд: приём заявки</h4>
+  <ol>
+    <li><code>POST /api/upload</code> принимает ZIP через <code>multer</code> (лимит 15 МБ).</li>
+    <li>Распаковка <code>adm-zip</code> во временную папку; проверка, что внутри одна корневая папка (сама игра).</li>
+    <li>Валидация (см. п. 4.8).</li>
+    <li>Если ошибка — возврат списка проблем, ученик видит их на форме и исправляет.</li>
+    <li>Если успех — папка переезжает в <code>_pending/&lt;uuid&gt;/</code>, рядом кладётся <code>meta.json</code> с полями из формы, timestamp и IP (для разбора спорных случаев).</li>
+    <li>Ответ: <code>{ ok: true, pendingId, message: "Заявка отправлена преподавателю" }</code>.</li>
+  </ol>
+
+  <h4>Админка преподавателя</h4>
+  <p>Статическая страница <code>admin/index.html</code> (защищена Basic Auth в Nginx):</p>
+  <ul>
+    <li>Список заявок из <code>GET /api/pending</code>: обложка, название, автор, описание, дата.</li>
+    <li>Кнопка «Открыть игру» — открывает <code>/api/pending/&lt;id&gt;/preview/index.html</code> в новой вкладке (сервер раздаёт временную папку).</li>
+    <li>Кнопки «Одобрить» (переносит в <code>games/&lt;slug&gt;/</code>) и «Отклонить» (удаляет из <code>_pending/</code>).</li>
+    <li>При одобрении проверяется уникальность <code>slug</code>: если занят, преподаватель может переименовать.</li>
+  </ul>
+
+  <h3>4.8. Валидация (на сервере при приёме заявки)</h3>
+  <p>Реализуется в <code>api/lib/validate.js</code>. Все проверки — блокирующие, при ошибке возвращается <code>400</code> со списком проблем.</p>
+  <ol>
+    <li>В ZIP одна корневая папка.</li>
+    <li><code>game.json</code> валиден по JSON Schema и содержит все обязательные поля; <code>genre</code> и <code>ageRating</code> — из списков.</li>
+    <li><code>slug</code> соответствует <code>^[a-z0-9][a-z0-9-]{1,40}$</code>; не занят в <code>games/</code> и в <code>_pending/</code>.</li>
+    <li>Присутствуют обязательные файлы: <code>index.html</code>, <code>style.css</code>, <code>script.js</code>, <code>game.json</code>, <code>cover.png</code>.</li>
+    <li>Размер папки игры ≤ 10 МБ; обложка ≤ 500 КБ; разрешение обложки — минимум 256×256.</li>
+    <li>Разрешённые расширения: <code>.html .css .js .json .png .jpg .jpeg .webp .gif .svg .mp3 .ogg .wav .woff2 .txt .md</code>.</li>
+    <li>Нет внешних URL в HTML/CSS/JS — regex-скан по <code>https?://</code> и <code>//cdn.</code> в атрибутах <code>src</code>, <code>href</code>, <code>url(...)</code>, а также по <code>fetch(</code>, <code>XMLHttpRequest</code>, <code>navigator.sendBeacon</code>.</li>
+    <li>Нет абсолютных путей в <code>&lt;script src&gt;</code> и <code>&lt;link href&gt;</code> — только относительные.</li>
+    <li>Нет <code>eval</code>, <code>new Function</code>, <code>document.write</code> (предупреждение, не блокирует).</li>
+  </ol>
+
+  <h3>4.9. Безопасность</h3>
+  <p>Без CI/CD и без разделения origin'ов модель безопасности строится на трёх принципах:</p>
+  <ol>
+    <li><strong>Модерация — единственный канал публикации.</strong> Непроверенный код никогда не попадает в <code>games/</code>. Если в админке Basic Auth, а сервер школьный — риск минимален.</li>
+    <li><strong>Iframe sandbox при встраивании.</strong> Если каталог показывает игру внутри страницы — только через
+      <pre><code>&lt;iframe src="games/snake/index.html"
+        sandbox="allow-scripts allow-popups allow-forms"
+        referrerpolicy="no-referrer"&gt;&lt;/iframe&gt;</code></pre>
+      Без <code>allow-same-origin</code>: игра не прочитает cookie и localStorage каталога. Если открывать игру в отдельной вкладке — там правила обычные, но это её собственная вкладка, ничего чужого не заденет.</li>
+    <li><strong>CSP для главной страницы и для игр.</strong>
+      <ul>
+        <li>Для каталога: <code>script-src 'self'; style-src 'self' 'unsafe-inline'; connect-src 'self'</code>.</li>
+        <li>Для игр: <code>script-src 'self' 'unsafe-inline'</code> (ученикам проще), <code>connect-src 'none'</code> — даже если в игре осталась попытка <code>fetch</code>, браузер заблокирует.</li>
+      </ul>
+    </li>
+  </ol>
+  <p>Дополнительно: <code>client_max_body_size 15m</code> в Nginx; ограничение скорости на <code>/api/upload</code>; логирование запросов к <code>/api/upload</code> и <code>/api/pending</code> для разбора инцидентов.</p>
+
+  <h3>4.10. Настройка сервера (кратко)</h3>
+  <ul>
+    <li>Ubuntu LTS, пользователь <code>antology</code>, SSH-ключи, UFW (80/443).</li>
+    <li>Nginx: статика из <code>/var/www/game-catalog</code>, reverse-proxy <code>/api/*</code> → <code>127.0.0.1:3000</code>.</li>
+    <li>Basic Auth для <code>/admin</code> и <code>/api/pending</code> (файл <code>/etc/nginx/.htpasswd</code>, <code>htpasswd -c</code>).</li>
+    <li>Node.js LTS, systemd-юнит <code>antology-api.service</code>, автозапуск при загрузке.</li>
+    <li>Права: <code>games/</code>, <code>_pending/</code>, <code>data/</code> — на запись пользователю <code>antology</code>; остальное — только чтение.</li>
+    <li>Certbot для TLS (или внутренний CA для LAN).</li>
+    <li>Резервное копирование: <code>games/</code> и <code>data/</code> — раз в сутки <code>rsync</code> в отдельную папку/на другой диск.</li>
+  </ul>
+
+  <h3>4.11. Дорожная карта</h3>
+  <table>
+    <thead><tr><th>Фаза</th><th>Длительность</th><th>Результат</th></tr></thead>
+    <tbody>
+      <tr><td><strong>0. Подготовка</strong></td><td>1 день</td><td>Сервер, DNS, Node.js, Nginx, базовая структура каталога</td></tr>
+      <tr><td><strong>1. Статический каталог</strong></td><td>2–3 дня</td><td><code>index.html</code>, <code>style.css</code>, <code>script.js</code>, демо-игра в <code>games/snake/</code>, рендер списка из временного <code>games.json</code></td></tr>
+      <tr><td><strong>2. Бэкенд: игры и лайки</strong></td><td>3–4 дня</td><td>Express-сервер, <code>GET /api/games</code>, <code>POST /api/games/:slug/like</code>, сессии на cookie, <code>data/votes.json</code></td></tr>
+      <tr><td><strong>3. Бэкенд: подача заявок</strong></td><td>3–4 дня</td><td><code>POST /api/upload</code>, распаковка ZIP, валидация, <code>_pending/</code>, <code>meta.json</code></td></tr>
+      <tr><td><strong>4. Админка преподавателя</strong></td><td>2–3 дня</td><td><code>admin/index.html</code>, <code>GET /api/pending</code>, <code>POST /api/pending/:id/approve</code>, <code>/reject</code>, Basic Auth</td></tr>
+      <tr><td><strong>5. Безопасность</strong></td><td>1–2 дня</td><td>CSP-заголовки, sandbox для iframe, rate limit на лайки, логирование</td></tr>
+      <tr><td><strong>6. Документация и демо</strong></td><td>2–3 дня</td><td><code>README.md</code>, <code>gamegenerateprompt.md</code>, <code>CONTRIBUTING.md</code>, <code>TEACHER_GUIDE.md</code>, <code>SECURITY.md</code>, 2–3 демо-игры</td></tr>
+      <tr><td><strong>7. Пилот</strong></td><td>1 неделя</td><td>3–5 учеников, 3–5 игр, обратная связь, правки</td></tr>
+    </tbody>
+  </table>
+  <p>Итого — около <strong>2 недель</strong> до состояния «можно запускать пилот».</p>
+</section>
+
+<!-- ============================================================ -->
+<section id="ai-instructions">
+  <h2>5. Инструкция для нейросети</h2>
+  <p>Этот раздел адресован ИИ-ассистенту (Claude, ChatGPT, Copilot и т.п.), который будет реализовывать проект. Прочитай его полностью перед началом.</p>
+
+  <h3>5.1. Роль и режим работы</h3>
+  <ul>
+    <li>Ты — <strong>senior full-stack инженер</strong>, знакомый с Node.js, Express, Nginx, безопасностью веб-приложений.</li>
+    <li>Работай <strong>пошагово</strong>: план → подтверждение → реализация. Не начинай писать код, пока не согласован план.</li>
+    <li>На каждом шаге объясняй, что делаешь и зачем.</li>
+    <li>При неоднозначности — задавай уточняющие вопросы. Один-два за раз.</li>
+  </ul>
+
+  <h3>5.2. Жёсткие правила проекта</h3>
+  <div class="callout warn">
+    <p class="callout-title">Обязательно соблюдать</p>
+    <ul style="margin:6px 0;">
+      <li><strong>Корень проекта — <code>game-catalog/</code>.</strong> Внутри: <code>index.html</code> (главная), <code>games/</code> (игры), <code>admin/</code>, <code>api/</code>, <code>_pending/</code>, <code>data/</code>.</li>
+      <li><strong>Изоляция игр.</strong> Каждая игра — в своей папке <code>games/&lt;slug&gt;/</code>. Никаких общих файлов между играми.</li>
+      <li><strong>Игры самостоятельны.</strong> Открытие <code>games/&lt;slug&gt;/index.html</code> напрямую в браузере должно работать без каталога и без сервера.</li>
+      <li><strong>Никакого CI/CD.</strong> Никаких GitHub Actions, никаких preview-окружений, никакой сборки.</li>
+      <li><strong>Интерфейс и документация — на русском.</strong> Названия игр на главной — из <code>game.json</code>.</li>
+      <li><strong>Голосование:</strong> одна сессия = один лайк на игру, тоггл ставить/снимать, счётчик рядом с каждой игрой.</li>
+      <li><strong>Подача игры:</strong> кнопка на главной → форма → ZIP → <code>_pending/</code> → админка → одобрение → <code>games/&lt;slug&gt;/</code>.</li>
+      <li><strong>Модерация</strong> — только преподаватель, защищена Basic Auth.</li>
+      <li><strong>Без БД.</strong> Только JSON-файлы на диске.</li>
+      <li><strong>Без аутентификации обычных пользователей.</strong> Только анонимные сессии для лайков.</li>
+    </ul>
+  </div>
+
+  <h3>5.3. Ограничения (scope)</h3>
+  <ul>
+    <li><strong>В scope:</strong> структура каталога, фронтенд главной и админки, Express-бэкенд (игры, лайки, upload, pending), валидация, конфиг Nginx, документация, демо-игра.</li>
+    <li><strong>Вне scope:</strong> разработка самих игр (кроме демо), регистрация/вход пользователей, БД, мобильное приложение, CI/CD.</li>
+    <li>Минимум зависимостей: <code>express</code>, <code>multer</code>, <code>adm-zip</code>, <code>cookie-parser</code>. Всё остальное — встроенное.</li>
+  </ul>
+
+  <h3>5.4. Стиль кода и артефактов</h3>
+  <ul>
+    <li>Node.js LTS, ESM (или CommonJS — но согласованно по всему проекту).</li>
+    <li>Комментарии на русском, только там, где смысл не очевиден из названий.</li>
+    <li>Документация на русском, в Markdown, с примерами команд.</li>
+    <li>Все секреты (ключ подписи cookie, пароль БД — если появится) — через переменные окружения, никогда в коде.</li>
+  </ul>
+
+  <h3>5.5. Порядок работы над проектом</h3>
+  <ol>
+    <li><strong>Фаза 0.</strong> Задать уточняющие вопросы по инфраструктуре (домен, LAN/интернет, TLS).</li>
+    <li><strong>Фаза 1.</strong> Создать структуру <code>game-catalog/</code> и файлы <code>README.md</code> и <code>gamegenerateprompt.md</code> (см. п. 6).</li>
+    <li><strong>Фаза 2.</strong> Статический каталог: <code>index.html</code>, <code>style.css</code>, <code>script.js</code>, демо-игра <code>games/snake/</code>.</li>
+    <li><strong>Фаза 3.</strong> Бэкенд: Express, <code>GET /api/games</code>, лайки, сессии, <code>data/votes.json</code>.</li>
+    <li><strong>Фаза 4.</strong> Загрузка: <code>POST /api/upload</code>, распаковка ZIP, валидация, <code>_pending/</code>.</li>
+    <li><strong>Фаза 5.</strong> Админка: <code>admin/index.html</code>, approve/reject, Basic Auth.</li>
+    <li><strong>Фаза 6.</strong> Nginx-конфиг, systemd-юнит, инструкция по установке.</li>
+    <li><strong>Фаза 7.</strong> Документация для ученика и преподавателя, чек-лист пилота.</li>
+  </ol>
+
+  <h3>5.6. Формат отчёта о работе</h3>
+  <p>После каждой фазы выдавай:</p>
+  <ul>
+    <li>список созданных/изменённых файлов;</li>
+    <li>команды для локальной проверки (<code>npm start</code>, <code>curl /api/games</code>);</li>
+    <li>что нужно сделать вручную (создать <code>.htpasswd</code>, настроить systemd);</li>
+    <li>что осталось на следующую фазу.</li>
+  </ul>
+</section>
+
+<!-- ============================================================ -->
+<section id="ai-command">
+  <h2>6. Команда для нейросети</h2>
+  <p>Скопируй этот блок и передай нейросети <strong>до начала реализации</strong>. Он гарантирует, что в корне проекта появятся <code>README.md</code> и <code>gamegenerateprompt.md</code> с правильным содержанием — с учётом новой архитектуры (без CI/CD, с голосованием и подачей заявок).</p>
+
+  <div class="prompt-block"><span class="label">Скопируй этот текст в диалог с ИИ</span>При реализации проекта «Антология игр» (см. приложенную документацию v2.0)
+в КОРНЕ каталога game-catalog/ обязательно создай два файла.
+
+Обрати внимание: в этой версии проекта НЕТ CI/CD, игры тестируются
+открытием games/<slug>/index.html напрямую, а голосование и подача
+заявок обслуживаются минимальным Node.js + Express бэкендом.
+
+──────────────────────────────────────────────
+ФАЙЛ 1: README.md
+──────────────────────────────────────────────
+Главная документация проекта. Обязательные разделы:
+
+1. «О проекте» — 2–3 абзаца: что такое «Антология игр», для кого,
+   как устроено (статический каталог + минимальный API,
+   без CI/CD, игры самостоятельны и тестируются напрямую).
+2. «Структура проекта» — дерево каталогов с пояснениями:
+   index.html, games/, _pending/, admin/, api/, data/.
+3. «Быстрый старт для ученика»:
+   - создать папку games/<slug>/ из шаблона games/_template/;
+   - заполнить game.json и cover.png;
+   - открыть games/<slug>/index.html — игра должна работать без сервера;
+   - упаковать папку в ZIP;
+   - на главной странице нажать «Подать игру» и загрузить ZIP.
+4. «Быстрый старт для преподавателя»:
+   - открыть /admin (Basic Auth);
+   - посмотреть заявку, открыть превью игры;
+   - одобрить (игра становится публичной) или отклонить.
+5. «Как работает голосование» — 5–7 строк: одна сессия = один лайк
+   на игру, лайк ставится и снимается, счётчик хранится в
+   data/votes.json, без аутентификации пользователей.
+6. «Запуск сервера локально»:
+   npm install, npm start, открыть http://localhost:3000.
+7. «Документация» — ссылки на docs/CONTRIBUTING.md,
+   docs/TEACHER_GUIDE.md, docs/SECURITY.md, gamegenerateprompt.md.
+8. «Лицензия и контакты» — заглушки для заполнения.
+
+Язык README.md — русский. Формат — Markdown.
+
+──────────────────────────────────────────────
+ФАЙЛ 2: gamegenerateprompt.md
+──────────────────────────────────────────────
+Файл-инструкция (промпт) для создания новой игры.
+Самодостаточен: открыл файл — сделал игру без обращения к остальной
+документации.
+
+Обязательные разделы:
+
+1. «Назначение файла» — что это промпт и для ИИ, и для ученика.
+2. «Правила игры»:
+   - только HTML/CSS/JS, без фреймворков и сборки;
+   - папка называется games/<slug>/, slug = ^[a-z0-9][a-z0-9-]{1,40}$;
+   - файлы в корне папки: index.html, style.css, script.js,
+     game.json, cover.png;
+   - опциональная папка assets/ для картинок, звуков, шрифтов;
+   - размер папки ≤ 10 МБ, обложка ≤ 500 КБ, минимум 256×256;
+   - запрещены внешние запросы: никаких fetch, XMLHttpRequest,
+     CDN, аналитики, внешних шрифтов;
+   - разрешённые расширения: .html .css .js .json .png .jpg .jpeg
+     .webp .gif .svg .mp3 .ogg .wav .woff2 .txt .md;
+   - игра должна открываться двойным кликом по index.html
+     и работать без сервера (тестирование автором).
+3. «Шаблон game.json» — полный пример с плейсхолдерами,
+   обязательные поля: slug, title, summary, description,
+   author.name, author.class, coverImage, createdAt;
+   допустимые значения genre и ageRating.
+4. «Шаблон index.html» — минимальный каркас:
+   <!DOCTYPE html>, meta viewport, подключение style.css и script.js
+   через относительные пути, игровое поле (<canvas> или <div>),
+   никаких внешних скриптов.
+5. «Шаблон style.css» — минимальный, чтобы игра открывалась
+   центрированно, без скролла, с чёрным фоном (или нейтральным).
+6. «Шаблон script.js» — каркас с инициализацией,
+   комментариями и одной игровой петлёй на requestAnimationFrame
+   или setInterval.
+7. «Как упаковать в ZIP для отправки» — пошагово:
+   выделить папку games/<slug>/ и отправить в архив;
+   на главной странице нажать «Подать игру», заполнить форму,
+   приложить ZIP, отправить.
+8. «Чек-лист перед отправкой» — 10 пунктов:
+   - index.html открывается локально и игра запускается;
+   - game.json заполнен и валиден;
+   - cover.png есть, размер в норме;
+   - нет внешних URL в HTML/CSS/JS;
+   - нет eval и new Function;
+   - ассеты свои или свободные (с указанием лицензии);
+   - размер папки в норме;
+   - управление описано в game.json (поле controls);
+   - описания написаны на русском;
+   - папка называется games/<slug>/, slug уникален.
+9. «Пример готовой папки» — дерево демо-игры snake/
+   с кратким описанием каждого файла и примерным содержимым.
+
+Язык gamegenerateprompt.md — русский. Формат — Markdown.
+
+──────────────────────────────────────────────
+ТРЕБОВАНИЯ К РЕАЛИЗАЦИИ
+──────────────────────────────────────────────
+- Оба файла создай в ПЕРВОМ ЖЕ шаге, до написания кода бэкенда
+  и Nginx-конфига, чтобы они стали точкой входа для всей работы.
+- Содержание файлов должно быть согласовано с планом реализации
+  v2.0: структура каталога, схема game.json, отсутствие CI/CD,
+  наличие голосования и подачи заявок через ZIP.
+- Не оставляй в файлах плейсхолдеров вида «TODO» или «...» —
+  только реальные, готовые к использованию тексты.
+- README.md должен быть понятен ученику 7–11 класса, который
+  впервые открывает проект.
+- gamegenerateprompt.md должен быть понятен и человеку, и ИИ:
+  явные инструкции, примеры, чек-листы.
+
+Подтверди готовность, кратко перечисли, что войдёт в каждый файл,
+и приступай к созданию.</div>
+
+  <div class="callout ok">
+    <p class="callout-title">Что изменилось по сравнению с v1.0</p>
+    <ul style="margin:6px 0;">
+      <li>Проект больше не GitHub-центричный — нет репозитория, PR, branch protection, GitHub Actions.</li>
+      <li>Нет CI/CD, нет preview-окружений, нет сборки. Игры тестируются напрямую.</li>
+      <li>Добавлен бэкенд (Express) — обязательный для лайков и подачи заявок.</li>
+      <li>Главная страница — <code>game-catalog/index.html</code>, рендерит карточки из API.</li>
+      <li>Подача — через кнопку и ZIP, а не через PR.</li>
+      <li>Модерация — через админку с Basic Auth, а не через merge.</li>
+    </ul>
+  </div>
+</section>
+
+<footer>
+  <p>Документ подготовлен как техническое задание для реализации проекта «Антология игр». Разделы 1–4 — для заказчика и разработчика; разделы 5–6 — для ИИ-ассистента.</p>
+  <p>Версия 2.0. При изменении требований — обновляйте документ и фиксируйте дату в шапке.</p>
+</footer>
+
+</div>
+</body>
+</html>

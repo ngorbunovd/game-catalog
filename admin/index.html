@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Админка — Антология игр</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { margin: 0; font-family: system-ui, sans-serif; background: #f8fafc; color: #1f2937; }
+    header { background: #0f172a; color: white; padding: 20px 24px; }
+    header h1 { margin: 0; font-size: 1.4rem; }
+    main { max-width: 1000px; margin: 0 auto; padding: 24px; }
+    .pending {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 20px; margin-bottom: 16px; display: flex; gap: 20px;
+    }
+    .pending img { width: 160px; height: 100px; object-fit: cover; border-radius: 8px; background: #e2e8f0; flex-shrink: 0; }
+    .pending .info { flex: 1; }
+    .pending h3 { margin: 0 0 6px; font-size: 1.15rem; }
+    .pending .meta { color: #6b7280; font-size: 0.9rem; margin-bottom: 8px; }
+    .pending .summary { color: #374151; font-size: 0.95rem; margin: 0 0 12px; }
+    .pending .actions { display: flex; gap: 8px; }
+    .pending .warnings { background: #fffbeb; border-left: 3px solid #f59e0b; padding: 8px 12px; border-radius: 4px; font-size: 0.85rem; margin: 8px 0; color: #92400e; }
+    button {
+      padding: 8px 16px; border-radius: 8px; border: 1px solid #e5e7eb;
+      background: white; cursor: pointer; font-size: 0.94rem; font-family: inherit;
+    }
+    button.primary { background: #16a34a; color: white; border-color: #16a34a; }
+    button.danger { color: #dc2626; border-color: #fecaca; }
+    button:hover { opacity: 0.85; }
+    .empty { text-align: center; color: #94a3b8; padding: 64px 0; font-size: 1.1rem; }
+    a { color: #2563eb; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Админка — заявки на публикацию</h1>
+  </header>
+  <main>
+    <div id="list"></div>
+    <div id="empty" class="empty" hidden>Нет заявок на проверку.</div>
+  </main>
+  <script>
+    const listEl = document.getElementById('list');
+    const emptyEl = document.getElementById('empty');
+
+    async function load() {
+      const r = await fetch('/api/pending');
+      const items = await r.json();
+      emptyEl.hidden = items.length > 0;
+      listEl.innerHTML = items.map(renderItem).join('');
+      listEl.querySelectorAll('[data-action]').forEach(btn => {
+        btn.addEventListener('click', () => handle(btn.dataset.action, btn.dataset.id));
+      });
+    }
+
+    function renderItem(p) {
+      const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+      const warnings = p.warnings?.length
+        ? `<div class="warnings">Предупреждения: ${p.warnings.map(esc).join('; ')}</div>` : '';
+      return `
+        <div class="pending">
+          <img src="${esc(p.coverUrl)}" alt="">
+          <div class="info">
+            <h3>${esc(p.title || p.slug)}</h3>
+            <div class="meta">
+              ${esc(p.author?.name || '')}${p.author?.class ? ', ' + esc(p.author.class) : ''}
+              · slug: <code>${esc(p.slug)}</code>
+              · ${new Date(p.submittedAt).toLocaleString('ru-RU')}
+            </div>
+            <p class="summary">${esc(p.summary || '')}</p>
+            ${warnings}
+            <div class="actions">
+              <a href="${esc(p.playUrl)}" target="_blank" rel="noopener"><button>Открыть игру</button></a>
+              <button class="primary" data-action="approve" data-id="${esc(p.pendingId)}">Одобрить</button>
+              <button class="danger" data-action="reject" data-id="${esc(p.pendingId)}">Отклонить</button>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function handle(action, id) {
+      if (action === 'reject' && !confirm('Удалить заявку без публикации?')) return;
+      if (action === 'approve' && !confirm('Опубликовать игру в каталоге?')) return;
+      const r = await fetch(`/api/pending/${id}/${action}`, { method: 'POST' });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        alert('Ошибка: ' + (d.error || r.status));
+        return;
+      }
+      load();
+    }
+
+    load();
+  </script>
+</body>
+</html>

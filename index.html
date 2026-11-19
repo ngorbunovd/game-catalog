@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#070b21">
+  <title>Антология игр</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎄</text></svg>">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="garland" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    <span class="flake f1" aria-hidden="true">❄</span>
+    <span class="flake f2" aria-hidden="true">❄</span>
+    <span class="flake f3" aria-hidden="true">❅</span>
+    <span class="flake f4" aria-hidden="true">❄</span>
+
+    <span class="pixel-tree" aria-hidden="true"></span>
+    <h1>Антология игр</h1>
+    <p class="subtitle">❄ Игры, созданные учениками нашего учебного заведения ❄</p>
+    <button id="open-upload" class="btn btn-primary">Подать игру</button>
+  </header>
+
+  <main>
+    <div class="toolbar">
+      <input type="search" id="search" placeholder="Поиск по названию или автору...">
+      <select id="genre-filter">
+        <option value="">Все жанры</option>
+        <option value="arcade">Аркада</option>
+        <option value="puzzle">Головоломка</option>
+        <option value="strategy">Стратегия</option>
+        <option value="action">Экшн</option>
+        <option value="adventure">Приключение</option>
+        <option value="quiz">Викторина</option>
+        <option value="other">Другое</option>
+      </select>
+    </div>
+
+    <div id="games" class="games"></div>
+    <div id="empty" class="empty" hidden>Пока ни одной игры нет. Станьте первым!</div>
+    <div id="error" class="empty" hidden></div>
+  </main>
+
+  <footer class="site-footer">
+    <div class="garland" aria-hidden="true">
+      <i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i>
+    </div>
+    Сделано учениками · С наступающим! <span aria-hidden="true">🎄</span>
+    · <a href="/admin">Админка</a>
+  </footer>
+
+  <dialog id="upload-modal" class="modal">
+    <form id="upload-form">
+      <h2>Подать игру на проверку</h2>
+      <p class="hint">Преподаватель проверит игру и опубликует её в каталоге.</p>
+
+      <label>Архив с игрой (ZIP) *
+        <input type="file" name="file" accept=".zip" required>
+      </label>
+      <p class="hint">Упакуйте папку <code>games/&lt;slug&gt;/</code> в ZIP-архив.</p>
+
+      <label>Slug (латиница, дефисы) *
+        <input type="text" name="slug" pattern="[a-z0-9][a-z0-9\-]{1,40}" required
+               placeholder="snake" autocomplete="off">
+      </label>
+      <p class="hint">Должен совпадать с именем папки внутри архива.</p>
+
+      <div id="upload-errors" class="errors" hidden></div>
+      <div id="upload-success" class="success" hidden></div>
+
+      <div class="actions">
+        <button type="button" id="close-upload" class="btn">Отмена</button>
+        <button type="submit" class="btn btn-primary" id="submit-upload">Отправить</button>
+      </div>
+    </form>
+  </dialog>
+
+  <canvas id="snow" aria-hidden="true"></canvas>
+
+  <script src="/script.js"></script>
+</body>
+</html>

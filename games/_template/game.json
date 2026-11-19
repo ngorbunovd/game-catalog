@@ -1,0 +1,15 @@
+{
+  "slug": "my-game",
+  "title": "Моя игра",
+  "summary": "Краткое описание в одну строку",
+  "description": "Полное описание игры в markdown.",
+  "author": { "name": "Иванов Иван", "class": "7А" },
+  "genre": "other",
+  "tags": [],
+  "controls": "Стрелки",
+  "ageRating": "0+",
+  "coverImage": "cover.svg",
+  "language": "ru",
+  "createdAt": "2025-01-01",
+  "license": "CC-BY-4.0"
+}

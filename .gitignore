@@ -1,0 +1,8 @@
+node_modules/
+_pending/*
+!_pending/.gitkeep
+data/votes.json
+data/votes.json.tmp
+.env
+*.log
+.DS_Store

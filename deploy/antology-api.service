@@ -1,0 +1,18 @@
+[Unit]
+Description=Antology games API
+After=network.target
+
+[Service]
+Type=simple
+User=antology
+Group=antology
+WorkingDirectory=/var/www/game-catalog
+Environment=NODE_ENV=production
+Environment=PORT=3000
+EnvironmentFile=/etc/antology.env
+ExecStart=/usr/bin/node api/server.js
+Restart=on-failure
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
