@@ -11,6 +11,8 @@ router.get('/', async (req, res) => {
     slug: g.slug,
     title: g.title,
     summary: g.summary || '',
+    description: g.description || '',
+    controls: g.controls || '',
     author: g.author || {},
     genre: g.genre || 'other',
     ageRating: g.ageRating || '0+',

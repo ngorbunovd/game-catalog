@@ -7,6 +7,7 @@ import { sessionMiddleware } from './lib/session.js';
 import gamesRouter from './routes/games.js';
 import uploadRouter from './routes/upload.js';
 import pendingRouter from './routes/pending.js';
+import adminGamesRouter from './routes/admin-games.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -35,6 +36,7 @@ function adminAuth(req, res, next) {
 app.use('/api/games', gamesRouter);
 app.use('/api/upload', uploadRouter);
 app.use('/api/pending', adminAuth, pendingRouter);
+app.use('/api/admin', adminAuth, adminGamesRouter);
 
 // Статика: каталог и игры
 app.get('/', (req, res) => res.sendFile(path.join(ROOT, 'index.html')));

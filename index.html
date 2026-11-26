@@ -22,6 +22,12 @@
     <h1>Антология игр</h1>
     <p class="subtitle">❄ Игры, созданные учениками нашего учебного заведения ❄</p>
     <button id="open-upload" class="btn btn-primary">Подать игру</button>
+    <div class="doc-links">
+      <a class="btn btn-ghost" target="_blank" rel="noopener"
+         href="https://github.com/ngorbunovd/game-catalog/blob/main/gamegenerateprompt.md">📘 Как сделать игру</a>
+      <a class="btn btn-ghost" target="_blank" rel="noopener"
+         href="https://github.com/ngorbunovd/game-catalog/blob/main/docs/CONTRIBUTING.md">📮 Как подать игру</a>
+    </div>
   </header>
 
   <main>
@@ -76,6 +82,13 @@
         <button type="submit" class="btn btn-primary" id="submit-upload">Отправить</button>
       </div>
     </form>
+  </dialog>
+
+  <dialog id="game-modal" class="modal">
+    <div id="game-modal-body"></div>
+    <div class="actions">
+      <button type="button" id="close-game" class="btn">Закрыть</button>
+    </div>
   </dialog>
 
   <canvas id="snow" aria-hidden="true"></canvas>

@@ -30,6 +30,14 @@
     button:hover { opacity: 0.85; }
     .empty { text-align: center; color: #94a3b8; padding: 64px 0; font-size: 1.1rem; }
     a { color: #2563eb; }
+    .pub-title { margin: 48px 0 16px; padding-top: 24px; border-top: 2px solid #e5e7eb; font-size: 1.25rem; }
+    .pub {
+      background: white; border: 1px solid #e5e7eb; border-radius: 12px;
+      padding: 12px 20px; margin-bottom: 8px; display: flex; gap: 16px; align-items: center;
+    }
+    .pub .name { flex: 1; }
+    .pub .name code { color: #6b7280; font-size: 0.85rem; }
+    .pub .likes { color: #6b7280; font-size: 0.9rem; white-space: nowrap; }
   </style>
 </head>
 <body>
@@ -39,6 +47,10 @@
   <main>
     <div id="list"></div>
     <div id="empty" class="empty" hidden>Нет заявок на проверку.</div>
+
+    <h2 class="pub-title">Опубликованные игры</h2>
+    <div id="pub-list"></div>
+    <div id="pub-empty" class="empty" hidden>Каталог пуст.</div>
   </main>
   <script>
     const listEl = document.getElementById('list');
@@ -92,7 +104,46 @@
       load();
     }
 
+    // Публикации
+    const pubListEl = document.getElementById('pub-list');
+    const pubEmptyEl = document.getElementById('pub-empty');
+
+    async function loadPublished() {
+      const r = await fetch('/api/games');
+      const games = await r.json();
+      pubEmptyEl.hidden = games.length > 0;
+      pubListEl.innerHTML = games.map(g => {
+        const esc = s => String(s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        return `
+          <div class="pub">
+            <div class="name">
+              <b>${esc(g.title)}</b> · <code>${esc(g.slug)}</code>
+              <div class="meta">${esc(g.author?.name || '')}${g.author?.class ? ', ' + esc(g.author.class) : ''}</div>
+            </div>
+            <span class="likes">❤ ${g.likes}</span>
+            <a href="/${esc(g.playUrl)}" target="_blank" rel="noopener"><button>Открыть</button></a>
+            <button class="danger" data-del="${esc(g.slug)}">Удалить</button>
+          </div>
+        `;
+      }).join('');
+      pubListEl.querySelectorAll('[data-del]').forEach(btn => {
+        btn.addEventListener('click', () => removeGame(btn.dataset.del));
+      });
+    }
+
+    async function removeGame(slug) {
+      if (!confirm(`Удалить игру «${slug}» из каталога? Файлы игры и её лайки будут удалены безвозвратно.`)) return;
+      const r = await fetch(`/api/admin/games/${slug}`, { method: 'DELETE' });
+      if (!r.ok) {
+        const d = await r.json().catch(() => ({}));
+        alert('Ошибка: ' + (d.error || r.status));
+        return;
+      }
+      loadPublished();
+    }
+
     load();
+    loadPublished();
   </script>
 </body>
 </html>

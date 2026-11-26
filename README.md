@@ -108,6 +108,18 @@ ADMIN_PASSWORD=secret SESSION_SECRET=$(openssl rand -hex 32) npm run dev
 
 Откройте http://localhost:3000 и http://localhost:3000/admin.
 
+## Тесты
+
+```bash
+npm test
+```
+
+Встроенный раннер `node:test`, без дополнительных зависимостей. Юнит-тесты
+валидатора и хранилища работают во временных каталогах; e2e поднимает
+реальный сервер на случайном порту и проходит цикл «подача → одобрение →
+лайк → удаление», не трогая данные проекта. Пути данных можно переопределять
+переменными `ANTOLOGY_GAMES_DIR`, `ANTOLOGY_PENDING_DIR`, `ANTOLOGY_DATA_DIR`.
+
 ## Документация
 
 - `gamegenerateprompt.md` — промпт-инструкция для создания игры

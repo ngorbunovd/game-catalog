@@ -29,20 +29,40 @@ function render() {
   emptyEl.hidden = filtered.length > 0;
   gamesEl.innerHTML = filtered.map(cardHtml).join('');
   gamesEl.querySelectorAll('.like').forEach(btn => {
-    btn.addEventListener('click', () => toggleLike(btn.dataset.slug, btn));
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      toggleLike(btn.dataset.slug, btn);
+    });
+  });
+  gamesEl.querySelectorAll('.play').forEach(a => {
+    a.addEventListener('click', e => e.stopPropagation());
+  });
+  gamesEl.querySelectorAll('.game-card').forEach(card => {
+    card.addEventListener('click', () => openGameModal(card.dataset.slug));
   });
 }
+
+const GENRE_RU = {
+  arcade: 'Аркада', puzzle: 'Головоломка', strategy: 'Стратегия',
+  action: 'Экшн', adventure: 'Приключение', quiz: 'Викторина', other: 'Другое',
+};
 
 function cardHtml(g) {
   const escape = s => String(s).replace(/[&<>"']/g, c => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   }[c]));
+  const tags = (g.tags || []).map(t => `<span class="tag">${escape(t)}</span>`).join('');
   return `
-    <article class="game-card">
+    <article class="game-card" data-slug="${escape(g.slug)}">
       <img class="cover" src="${escape(g.coverImage)}" alt="${escape(g.title)}" loading="lazy">
       <div class="body">
+        <div class="badges">
+          <span class="badge">${escape(GENRE_RU[g.genre] || g.genre || 'Другое')}</span>
+          <span class="badge age">${escape(g.ageRating || '0+')}</span>
+        </div>
         <h3>${escape(g.title)}</h3>
         <p class="summary">${escape(g.summary)}</p>
+        ${tags ? `<div class="tags">${tags}</div>` : ''}
         <div class="author">${escape(g.author?.name || '')}${g.author?.class ? ', ' + escape(g.author.class) : ''}</div>
       </div>
       <div class="footer">
@@ -55,6 +75,40 @@ function cardHtml(g) {
     </article>
   `;
 }
+
+// Модалка с описанием игры
+const gameModal = document.getElementById('game-modal');
+const gameModalBody = document.getElementById('game-modal-body');
+
+function openGameModal(slug) {
+  const g = state.games.find(x => x.slug === slug);
+  if (!g) return;
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  }[c]));
+  const tags = (g.tags || []).map(t => `<span class="tag">${esc(t)}</span>`).join('');
+  gameModalBody.innerHTML = `
+    <img class="details-cover" src="${esc(g.coverImage)}" alt="">
+    <h2>${esc(g.title)}</h2>
+    <div class="badges">
+      <span class="badge">${esc(GENRE_RU[g.genre] || g.genre || 'Другое')}</span>
+      <span class="badge age">${esc(g.ageRating || '0+')}</span>
+    </div>
+    ${tags ? `<div class="tags">${tags}</div>` : ''}
+    <p class="author-line">${esc(g.author?.name || '')}${g.author?.class ? ', ' + esc(g.author.class) : ''}</p>
+    <p class="desc">${esc(g.description || g.summary || '')}</p>
+    ${g.controls ? `<p class="controls">🎮 Управление: ${esc(g.controls)}</p>` : ''}
+    <div class="actions">
+      <a class="btn btn-primary" href="${esc(g.playUrl)}" target="_blank" rel="noopener">Играть →</a>
+    </div>
+  `;
+  gameModal.showModal();
+}
+
+document.getElementById('close-game').addEventListener('click', () => gameModal.close());
+gameModal.addEventListener('click', e => {
+  if (e.target === gameModal) gameModal.close(); // клик по подложке
+});
 
 async function toggleLike(slug, btn) {
   btn.disabled = true;

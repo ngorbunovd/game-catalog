@@ -4,10 +4,12 @@ import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(__dirname, '../../');
-export const GAMES_DIR = path.join(ROOT, 'games');
-export const PENDING_DIR = path.join(ROOT, '_pending');
-export const DATA_DIR = path.join(ROOT, 'data');
-export const VOTES_FILE = path.join(DATA_DIR, 'votes.json');
+// Пути можно переопределить переменными окружения — так работают тесты:
+// они указывают на временные каталоги и не трогают реальные данные
+export const GAMES_DIR = process.env.ANTOLOGY_GAMES_DIR || path.join(ROOT, 'games');
+export const PENDING_DIR = process.env.ANTOLOGY_PENDING_DIR || path.join(ROOT, '_pending');
+export const DATA_DIR = process.env.ANTOLOGY_DATA_DIR || path.join(ROOT, 'data');
+export const VOTES_FILE = process.env.ANTOLOGY_VOTES_FILE || path.join(DATA_DIR, 'votes.json');
 
 export async function ensureDirs() {
   await fs.mkdir(GAMES_DIR, { recursive: true });
